@@ -1,5 +1,16 @@
 Teknologi : spreadsheet + Google script
 
+Cara Pasang di GAS
+1. Buat GAS project baru (standalone, bukan dari Spreadsheet) → Extensions → Apps Script
+2. Isi SS_ID di Code_KRS.gs baris 1:
+const SS_ID = 'ID_SPREADSHEET_DB_MASTER_KAMU';
+3. Buat 2 file:
+
+Code.gs → paste isi Code_KRS.gs
+HTML file → nama Index_KRS → paste isi KRS_Index.html
+4. Buat sheet krs_config di Spreadsheet DB Master — lihat panduan di halaman Konfigurasi KRS dalam aplikasi.
+5. Deploy sebagai Web App.
+
 Fitur Lengkap Modul KRS
 
 DashboardStatistik : diajukan/disetujui/ditolak/belum input, tabel semua KRS dengan quick-approve
