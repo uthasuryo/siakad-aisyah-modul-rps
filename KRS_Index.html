@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIAKAD — Kartu Rencana Studi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Lato:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   VARIABLES
+══════════════════════════════════════════ */
+:root {
+  --hijau-tua:   #0D4F2C;
+  --hijau-mid:   #1A6B3C;
+  --hijau-muda:  #2E8B57;
+  --hijau-pale:  #E8F5ED;
+  --emas:        #C9A84C;
+  --emas-terang: #E2C27A;
+  --emas-gelap:  #9E7A2A;
+  --emas-pale:   #FDF6E3;
+  --krem:        #FFF8E7;
+  --krem-gelap:  #F5EDD4;
+  --putih:       #FFFFFF;
+  --teks-gelap:  #1A2A1E;
+  --teks-mid:    #3A5A42;
+  --teks-abu:    #6B7B6E;
+  --border:      #D4C5A0;
+  --error:       #C0392B;
+  --sukses:      #1A6B3C;
+  --warning:     #D97706;
+  --shadow-sm:   0 2px 8px rgba(13,79,44,.10);
+  --shadow-md:   0 4px 20px rgba(13,79,44,.15);
+  --shadow-lg:   0 10px 40px rgba(13,79,44,.20);
+  --sidebar-w:   252px;
+  --topbar-h:    60px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Lato',sans-serif;font-size:14px;color:var(--teks-gelap)}
+button{cursor:pointer;font-family:'Lato',sans-serif}
+input,select,textarea{font-family:'Lato',sans-serif}
+a{text-decoration:none}
+
+.app{display:flex;height:100vh;overflow:hidden;background:var(--krem)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);
+  background:linear-gradient(180deg,var(--hijau-tua) 0%,#0a3d22 100%);
+  display:flex;flex-direction:column;flex-shrink:0;z-index:50;
+  position:relative;overflow:hidden;transition:transform .25s ease;
+}
+.sidebar::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23C9A84C' fill-opacity='0.05'%3E%3Cpath d='M30 0l8.66 15H21.34L30 0zm0 60l-8.66-15h17.32L30 60zM0 30l15-8.66V38.66L0 30zm60 0L45 38.66V21.34L60 30zM30 22.5l7.5 4.33v8.66L30 39.67l-7.5-4.33V26.83L30 22.5z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.sidebar::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--hijau-tua),var(--emas),var(--hijau-tua))}
+
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(201,168,76,.15);position:relative;z-index:1}
+.sidebar-logo .bismillah{font-family:'Amiri',serif;font-size:1.1rem;color:var(--emas-terang);text-align:center;margin-bottom:10px;letter-spacing:1px}
+.sidebar-logo .logo-row{display:flex;align-items:center;gap:10px}
+.sidebar-logo .logo-icon{width:38px;height:38px;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sidebar-logo .app-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--putih);letter-spacing:1px}
+.sidebar-logo .app-sub{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--emas-terang);opacity:.7;margin-top:1px}
+
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto;position:relative;z-index:1}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);border-radius:2px}
+.nav-section{margin-bottom:22px}
+.nav-section-label{font-family:'Cinzel',serif;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:rgba(201,168,76,.5);padding:0 8px 8px;display:flex;align-items:center;gap:8px}
+.nav-section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.2),transparent)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6);transition:all .2s;margin-bottom:2px;position:relative;user-select:none;border:1px solid transparent}
+.nav-item .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+.nav-item.active{background:rgba(201,168,76,.12);color:var(--emas-terang);border-color:rgba(201,168,76,.2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;border-radius:0 2px 2px 0;background:var(--emas)}
+.nav-badge{margin-left:auto;background:var(--emas);color:var(--hijau-tua);font-size:10px;font-weight:700;font-family:'Cinzel',serif;padding:1px 7px;border-radius:10px}
+
+.sidebar-footer{padding:12px 18px;border-top:1px solid rgba(201,168,76,.1);position:relative;z-index:1;text-align:center}
+.sidebar-footer .version{font-size:9px;font-family:'Cinzel',serif;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.sidebar-footer .inst{font-size:10px;color:rgba(201,168,76,.5);margin-top:2px}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:var(--hijau-tua);border-bottom:2px solid var(--emas);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;position:relative;overflow:hidden}
+.topbar::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--emas),transparent)}
+.topbar-menu-btn{width:34px;height:34px;border:1px solid rgba(201,168,76,.25);border-radius:7px;background:rgba(201,168,76,.08);color:var(--emas-terang);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.topbar-menu-btn:hover{background:rgba(201,168,76,.15)}
+.topbar-gem{width:8px;height:8px;background:var(--emas);transform:rotate(45deg);opacity:.6}
+.topbar-titles .page-title{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--putih);letter-spacing:.5px}
+.topbar-titles .page-sub{font-size:11px;color:var(--emas-terang);opacity:.75}
+.topbar-spacer{flex:1}
+.btn-refresh{padding:7px 16px;border:1.5px solid rgba(201,168,76,.4);border-radius:8px;background:rgba(201,168,76,.08);font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.8px;color:var(--emas-terang);transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-refresh:hover{background:rgba(201,168,76,.18);border-color:var(--emas)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:22px 24px;background:var(--krem);background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23C9A84C' fill-opacity='0.03'%3E%3Cpath d='M30 0l8.66 15H21.34L30 0zm0 60l-8.66-15h17.32L30 60zM0 30l15-8.66V38.66L0 30zm60 0L45 38.66V21.34L60 30zM30 22.5l7.5 4.33v8.66L30 39.67l-7.5-4.33V26.83L30 22.5z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.page{display:none;animation:pageIn .3s ease}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.stat-card{background:var(--putih);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:18px 16px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--hijau-tua),var(--emas))}
+.stat-icon{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--hijau-tua),var(--hijau-mid));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 12px rgba(13,79,44,.25)}
+.stat-val{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1;color:var(--hijau-tua)}
+.stat-lbl{font-size:11px;color:var(--teks-abu);margin-top:3px;font-weight:600}
+
+/* ── CARD ── */
+.card{background:var(--putih);border:1px solid rgba(201,168,76,.2);border-radius:16px;box-shadow:var(--shadow-sm);margin-bottom:18px;overflow:hidden}
+.card-header{background:linear-gradient(90deg,var(--hijau-tua),var(--hijau-mid));padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.card-header-icon{width:34px;height:34px;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.card-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.8px;color:var(--putih)}
+.card-subtitle{font-size:11px;color:var(--emas-terang);opacity:.85;margin-top:1px}
+.card-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card-body{padding:20px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:9px;border:none;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.8px;transition:all .2s;white-space:nowrap;cursor:pointer}
+.btn-sm{padding:7px 13px;font-size:10px}
+.btn-xs{padding:4px 9px;font-size:10px;border-radius:6px}
+.btn-primary{background:linear-gradient(135deg,var(--hijau-tua),var(--hijau-mid));color:var(--emas-terang);box-shadow:0 3px 12px rgba(13,79,44,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(13,79,44,.4)}
+.btn-emas{background:linear-gradient(135deg,var(--emas-gelap),var(--emas));color:var(--hijau-tua);box-shadow:0 3px 12px rgba(201,168,76,.3)}
+.btn-emas:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(201,168,76,.4)}
+.btn-secondary{background:var(--putih);color:var(--hijau-tua);border:1.5px solid var(--hijau-tua)}
+.btn-secondary:hover{background:var(--krem)}
+.btn-ghost{background:transparent;color:var(--teks-abu);border:1px solid var(--border);padding:5px 9px}
+.btn-ghost:hover{background:var(--krem-gelap);color:var(--teks-gelap)}
+.btn-danger{background:var(--error);color:var(--putih)}
+.btn-danger:hover{background:#a93226}
+.btn-approve{background:linear-gradient(135deg,var(--sukses),var(--hijau-muda));color:var(--putih)}
+.btn-approve:hover{transform:translateY(-1px)}
+.btn-tolak{background:linear-gradient(135deg,#a93226,var(--error));color:var(--putih)}
+.btn-tolak:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:linear-gradient(90deg,#f0ebe0,var(--krem-gelap))}
+thead th{padding:11px 13px;text-align:left;font-family:'Cinzel',serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--hijau-tua);border-bottom:2px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(212,197,160,.4);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(201,168,76,.05)}
+tbody td{padding:10px 13px;vertical-align:middle}
+.td-actions{display:flex;gap:5px}
+.empty-state{text-align:center;padding:48px 20px;color:var(--teks-abu)}
+.empty-state .icon{font-size:40px;margin-bottom:12px;opacity:.5}
+.empty-state .msg{font-size:13px}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.badge-draft    {background:var(--krem-gelap);color:var(--teks-abu);border:1px solid var(--border)}
+.badge-diajukan {background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.badge-disetujui{background:var(--hijau-pale);color:var(--sukses);border:1px solid rgba(26,107,60,.2)}
+.badge-ditolak  {background:#FFF1F2;color:var(--error);border:1px solid #FECDD3}
+.badge-scope{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-family:'Cinzel',serif;font-size:9px;font-weight:700}
+.badge-mkwn{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.badge-mkli{background:var(--hijau-pale);color:var(--hijau-tua);border:1px solid rgba(13,79,44,.2)}
+.badge-mki {background:var(--emas-pale);color:var(--emas-gelap);border:1px solid rgba(201,168,76,.3)}
+.badge-mkkk{background:#F5F3FF;color:#6D28D9;border:1px solid #DDD6FE}
+.badge-mkp {background:#FFF1F2;color:#BE123C;border:1px solid #FECDD3}
+
+/* ── SEARCH BOX ── */
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-box{position:relative;flex:1;min-width:200px}
+.search-box .si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--teks-abu);font-size:14px;pointer-events:none}
+.search-box input{width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;background:var(--krem);color:var(--teks-gelap);outline:none;transition:all .2s;font-family:'Lato',sans-serif}
+.search-box input:focus{border-color:var(--hijau-mid);background:var(--putih);box-shadow:0 0 0 3px rgba(26,107,60,.1)}
+.search-box input::placeholder{color:var(--teks-abu);font-style:italic}
+.filter-select{padding:9px 30px 9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:12px;background:var(--krem);color:var(--teks-gelap);outline:none;cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230D4F2C' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.filter-select:focus{border-color:var(--hijau-mid)}
+
+/* ── INFO / ALERT PANELS ── */
+.info-panel{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-left:3px solid var(--emas);border-radius:9px;padding:11px 14px;font-size:12px;color:var(--emas-gelap);display:flex;gap:8px;align-items:flex-start;margin-bottom:16px}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:10px;font-size:12px;margin-bottom:12px;border-left:3px solid transparent}
+.alert-sukses{background:var(--hijau-pale);border-left-color:var(--sukses);color:var(--sukses)}
+.alert-error{background:#FFF1F2;border-left-color:var(--error);color:var(--error)}
+.alert-warn{background:var(--emas-pale);border-left-color:var(--emas);color:var(--emas-gelap)}
+
+/* ── KRS STEP WIZARD ── */
+.wizard-steps{display:flex;align-items:center;gap:0;margin-bottom:22px;background:var(--putih);border:1px solid rgba(201,168,76,.2);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.wstep{flex:1;display:flex;align-items:center;padding:14px 16px;gap:10px;border-right:1px solid rgba(201,168,76,.15);transition:all .2s;cursor:default}
+.wstep:last-child{border-right:none}
+.wstep.active{background:linear-gradient(90deg,var(--hijau-tua),var(--hijau-mid))}
+.wstep.done{background:rgba(26,107,60,.06)}
+.wstep.active .wnum{background:var(--emas);color:var(--hijau-tua)}
+.wstep.done .wnum{background:var(--hijau-mid);color:var(--putih)}
+.wnum{width:26px;height:26px;border-radius:50%;background:var(--border);color:var(--teks-abu);font-family:'Cinzel',serif;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.wlabel{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--teks-abu);transition:all .2s}
+.wstep.active .wlabel{color:var(--emas-terang)}
+.wstep.done .wlabel{color:var(--sukses)}
+.wsub{font-size:10px;color:var(--teks-abu);margin-top:1px}
+.wstep.active .wsub{color:rgba(255,255,255,.6)}
+
+/* ── MAHASISWA INFO CARD ── */
+.mhs-card{background:linear-gradient(135deg,var(--hijau-tua),var(--hijau-mid));border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow-md);margin-bottom:16px;position:relative;overflow:hidden}
+.mhs-card::before{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(201,168,76,.08)}
+.mhs-avatar{width:52px;height:52px;border-radius:50%;background:rgba(201,168,76,.2);border:2px solid rgba(201,168,76,.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.mhs-info .nim{font-family:'Cinzel',serif;font-size:11px;color:var(--emas-terang);letter-spacing:.8px;opacity:.9}
+.mhs-info .nama{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--putih);margin:2px 0}
+.mhs-info .detail{font-size:11px;color:rgba(255,255,255,.65)}
+.mhs-stats{margin-left:auto;display:flex;gap:16px;flex-shrink:0}
+.mhs-stat{text-align:center}
+.mhs-stat .val{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--emas-terang)}
+.mhs-stat .lbl{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.8px}
+
+/* ── KELAS PILIH GRID ── */
+.kelas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:12px}
+.kelas-item{background:var(--putih);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .2s;position:relative;user-select:none}
+.kelas-item:hover{border-color:var(--hijau-mid);box-shadow:var(--shadow-sm)}
+.kelas-item.selected{border-color:var(--hijau-mid);background:var(--hijau-pale);box-shadow:0 0 0 3px rgba(26,107,60,.12)}
+.kelas-item.disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+.kelas-item .ki-check{position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s;background:var(--putih)}
+.kelas-item.selected .ki-check{background:var(--hijau-mid);border-color:var(--hijau-mid);color:var(--putih)}
+.kelas-item .ki-kode{font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:var(--teks-abu);letter-spacing:.5px;margin-bottom:4px}
+.kelas-item .ki-nama{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--hijau-tua);margin-bottom:6px;padding-right:30px;line-height:1.3}
+.kelas-item .ki-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.kelas-item .ki-sks{background:linear-gradient(135deg,var(--hijau-tua),var(--hijau-mid));color:var(--emas-terang);font-family:'Cinzel',serif;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px}
+.kelas-item .ki-dosen{font-size:11px;color:var(--teks-abu);font-style:italic}
+.kelas-item .ki-jalur{padding:2px 7px;border-radius:4px;font-family:'Cinzel',serif;font-size:9px;font-weight:700}
+.jalur-r{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.jalur-i{background:var(--emas-pale);color:var(--emas-gelap);border:1px solid rgba(201,168,76,.3)}
+
+/* ── SKS METER ── */
+.sks-meter{background:var(--putih);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.sks-meter-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sks-meter-label{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--hijau-tua);letter-spacing:.5px}
+.sks-meter-val{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--hijau-tua)}
+.sks-meter-max{font-size:12px;color:var(--teks-abu)}
+.sks-bar{height:10px;background:rgba(201,168,76,.15);border-radius:5px;overflow:hidden}
+.sks-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--hijau-tua),var(--emas));transition:width .4s ease}
+.sks-bar-fill.warn{background:linear-gradient(90deg,var(--warning),#F59E0B)}
+.sks-bar-fill.over{background:linear-gradient(90deg,#a93226,var(--error))}
+
+/* ── REKAP CHIPS ── */
+.rekap-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.rekap-chip{padding:5px 12px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.5px;cursor:pointer;border:1.5px solid var(--border);background:var(--krem);color:var(--teks-mid);transition:all .15s}
+.rekap-chip.active{background:linear-gradient(135deg,var(--hijau-tua),var(--hijau-mid));color:var(--emas-terang);border-color:transparent}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid .span-2{grid-column:span 2}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--hijau-tua)}
+.form-label .req{color:var(--error);margin-left:2px}
+.form-input,.form-select,.form-textarea{padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--teks-gelap);background:var(--krem);outline:none;transition:all .2s;width:100%;font-family:'Lato',sans-serif}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--hijau-mid);background:var(--putih);box-shadow:0 0 0 3px rgba(26,107,60,.1)}
+.form-input::placeholder{color:var(--teks-abu);font-style:italic}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230D4F2C' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:36px;appearance:none}
+.form-textarea{resize:vertical;min-height:70px}
+.form-hint{font-size:11px;color:var(--teks-abu);font-style:italic}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,30,18,.55);backdrop-filter:blur(3px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .2s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal{background:var(--putih);border:1px solid rgba(201,168,76,.2);border-radius:18px;box-shadow:var(--shadow-lg);width:100%;max-width:500px;max-height:90vh;display:flex;flex-direction:column;transform:translateY(14px) scale(.97);transition:transform .25s;overflow:hidden}
+.modal-overlay.open .modal{transform:translateY(0) scale(1)}
+.modal-lg{max-width:720px}
+.modal-header{background:linear-gradient(90deg,var(--hijau-tua),var(--hijau-mid));padding:16px 20px;display:flex;align-items:center;gap:10px}
+.modal-header-icon{width:32px;height:32px;border-radius:50%;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:14px}
+.modal-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--putih);letter-spacing:.5px}
+.modal-close{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all .15s}
+.modal-close:hover{background:rgba(255,255,255,.2);color:var(--putih)}
+.modal-body{padding:22px;overflow-y:auto;flex:1;background:var(--krem)}
+.modal-body::-webkit-scrollbar{width:4px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--putih)}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:22px;right:22px;z-index:500;display:flex;flex-direction:column;gap:8px}
+.toast{display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:10px;font-family:'Lato',sans-serif;font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);min-width:240px;max-width:360px;animation:toastIn .25s ease;border-left:4px solid transparent}
+.toast.success{background:var(--putih);color:var(--sukses);border-left-color:var(--sukses)}
+.toast.error{background:var(--putih);color:var(--error);border-left-color:var(--error)}
+.toast.warning{background:var(--putih);color:var(--emas-gelap);border-left-color:var(--emas)}
+.toast.default{background:var(--hijau-tua);color:var(--emas-terang);border-left-color:var(--emas)}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--teks-abu)}
+.spinner{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--hijau-mid);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PRINT KRS ── */
+@media print {
+  .sidebar,.topbar,.btn,.card-actions,.td-actions,.toast-container{display:none!important}
+  .main,.content{overflow:visible!important;height:auto!important}
+  .page{display:block!important}
+  .print-krs{page-break-after:always}
+}
+.print-krs-header{text-align:center;margin-bottom:18px}
+.print-krs-header .inst-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--hijau-tua)}
+.print-krs-header .doc-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--emas-gelap);border-top:2px solid var(--emas);border-bottom:2px solid var(--emas);padding:6px 0;margin:8px 0;text-transform:uppercase}
+
+@media(max-width:768px){
+  .sidebar{position:fixed;top:0;left:0;height:100vh;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .form-grid{grid-template-columns:1fr}
+  .form-grid .span-2{grid-column:span 1}
+  .wizard-steps{flex-wrap:wrap}
+  .wstep{min-width:120px;flex:none}
+  .kelas-grid{grid-template-columns:1fr}
+  .mhs-stats{display:none}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ── Config Pill ── */
+.config-pill{display:flex;align-items:center;gap:10px;padding:6px 14px;border:1px solid rgba(201,168,76,.3);border-radius:20px;background:rgba(201,168,76,.08)}
+#cp-status.buka{background:rgba(26,107,60,.3);color:#6FFFA8}
+#cp-status.tutup{background:rgba(192,57,43,.3);color:#FFB3AE}
+@media(max-width:768px){.config-pill{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</div>
+    <div class="logo-row">
+      <div class="logo-icon">📝</div>
+      <div>
+        <div class="app-title">SIAKAD</div>
+        <div class="app-sub">Kartu Rencana Studi</div>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Beranda</div>
+      <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <span class="ni">🏠</span> Dashboard
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Input KRS</div>
+      <div class="nav-item" onclick="showPage('input')" id="nav-input">
+        <span class="ni">✍️</span> Input KRS
+      </div>
+      <div class="nav-item" onclick="showPage('approval')" id="nav-approval">
+        <span class="ni">✅</span> Approval KRS
+        <span class="nav-badge" id="badge-menunggu">0</span>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Laporan</div>
+      <div class="nav-item" onclick="showPage('rekap')" id="nav-rekap">
+        <span class="ni">📊</span> Rekap KRS
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Pengaturan</div>
+      <div class="nav-item" onclick="showPage('config')" id="nav-config">
+        <span class="ni">⚙️</span> Konfigurasi KRS
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="version">v1.0 · Modul KRS</div>
+    <div class="inst">IAI Al-Aqidah Al-Hasyimiyyah</div>
+  </div>
+</aside>
+
+<!-- ════════ MAIN ════════ -->
+<div class="main">
+  <div class="topbar">
+    <button class="topbar-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <div class="topbar-gem"></div>
+    <div class="topbar-titles">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="page-sub" id="page-sub">Kartu Rencana Studi Mahasiswa</div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="config-pill" id="topbar-config-pill">
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-family:'Cinzel',serif;font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--emas-terang);opacity:.7">Tahun Ajaran</span>
+        <span style="font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--emas-terang)" id="cp-ta">—</span>
+      </div>
+      <div style="width:1px;height:28px;background:rgba(201,168,76,.2)"></div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-family:'Cinzel',serif;font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--emas-terang);opacity:.7">Default Smt</span>
+        <span style="font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--emas-terang)" id="cp-smt" title="Fallback semester — dipakai jika data akademik mahasiswa belum ada">—</span>
+      </div>
+      <div style="width:1px;height:28px;background:rgba(201,168,76,.2)"></div>
+      <span style="font-family:'Cinzel',serif;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px" id="cp-status">—</span>
+    </div>
+    <button class="btn-refresh" onclick="refreshData()">🔄 Refresh</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📋</div><div><div class="stat-val" id="s-total">—</div><div class="stat-lbl">Total KRS</div></div></div>
+        <div class="stat-card"><div class="stat-icon">⏳</div><div><div class="stat-val" id="s-menunggu">—</div><div class="stat-lbl">Menunggu Approval</div></div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div><div class="stat-val" id="s-disetujui">—</div><div class="stat-lbl">Disetujui</div></div></div>
+        <div class="stat-card"><div class="stat-icon">❌</div><div><div class="stat-val" id="s-ditolak">—</div><div class="stat-lbl">Ditolak</div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">📋</div>
+          <div>
+            <div class="card-title">KRS Terbaru</div>
+            <div class="card-subtitle">Semua pengajuan KRS mahasiswa</div>
+          </div>
+          <div class="card-actions">
+            <select class="filter-select" id="dash-filter-ta" onchange="loadDashboard()" style="background:rgba(255,255,255,.15);border-color:rgba(201,168,76,.4);color:var(--emas-terang);font-family:'Cinzel',serif;font-size:10px">
+              <option value="">Semua Tahun Ajaran</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>NIM</th><th>Nama Mahasiswa</th><th>Prodi</th>
+                <th>Smt</th><th>Tahun Ajaran</th><th>SKS</th><th>Status</th><th>Aksi</th>
+              </tr></thead>
+              <tbody id="tbl-dashboard"></tbody>
+            </table>
+          </div>
+          <div id="empty-dashboard" class="empty-state" style="display:none">
+            <div class="icon">📋</div><div class="msg">Belum ada data KRS.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INPUT KRS ── -->
+    <div class="page" id="page-input">
+      <!-- Wizard steps -->
+      <div class="wizard-steps">
+        <div class="wstep active" id="wstep-1">
+          <div class="wnum">1</div>
+          <div><div class="wlabel">Pilih Mahasiswa</div><div class="wsub">Cari berdasarkan NIM</div></div>
+        </div>
+        <div class="wstep" id="wstep-2">
+          <div class="wnum">2</div>
+          <div><div class="wlabel">Pilih Semester</div><div class="wsub">Tahun ajaran & semester</div></div>
+        </div>
+        <div class="wstep" id="wstep-3">
+          <div class="wnum">3</div>
+          <div><div class="wlabel">Pilih Mata Kuliah</div><div class="wsub">Centang kelas yang diambil</div></div>
+        </div>
+        <div class="wstep" id="wstep-4">
+          <div class="wnum">4</div>
+          <div><div class="wlabel">Konfirmasi</div><div class="wsub">Review & simpan</div></div>
+        </div>
+      </div>
+
+      <!-- Step 1: Cari Mahasiswa -->
+      <div id="step-1">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">🔍</div>
+            <div><div class="card-title">Cari Mahasiswa</div><div class="card-subtitle">Masukkan NIM atau nama mahasiswa</div></div>
+          </div>
+          <div class="card-body">
+            <div class="form-group" style="max-width:440px;">
+              <label class="form-label">NIM atau Nama <span class="req">*</span></label>
+              <div style="display:flex;gap:8px;">
+                <input class="form-input" id="input-cari-mhs" placeholder="cth: 232200001 atau Ahmad Fauzan" oninput="searchMahasiswaLive()">
+                <button class="btn btn-emas" onclick="cariMahasiswa()">🔍 Cari</button>
+              </div>
+              <div class="form-hint">Ketik minimal 3 karakter untuk pencarian otomatis</div>
+            </div>
+            <div id="search-results" style="margin-top:14px;display:none;">
+              <div style="font-family:'Cinzel',serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--teks-abu);margin-bottom:8px;">Hasil Pencarian</div>
+              <div id="search-results-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+            <div id="search-empty" class="empty-state" style="display:none;padding:24px 0;">
+              <div class="icon" style="font-size:28px;">🔍</div>
+              <div class="msg">Mahasiswa tidak ditemukan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Pilih Semester -->
+      <div id="step-2" style="display:none;">
+        <div id="mhs-card-2"></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">📅</div>
+            <div><div class="card-title">Semester & Tahun Ajaran</div><div class="card-subtitle">Pilih semester yang akan diprogram</div></div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid" style="max-width:480px;">
+              <div class="form-group">
+                <label class="form-label">Semester <span class="req">*</span></label>
+                <select class="form-select" id="input-semester">
+                  <option value="1">Semester 1</option><option value="2">Semester 2</option>
+                  <option value="3">Semester 3</option><option value="4">Semester 4</option>
+                  <option value="5">Semester 5</option><option value="6">Semester 6</option>
+                  <option value="7">Semester 7</option><option value="8">Semester 8</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tahun Ajaran <span class="req">*</span></label>
+                <input class="form-input" id="input-ta" placeholder="2025/2026">
+              </div>
+            </div>
+            <div id="krs-existing-info" style="margin-top:14px;display:none;"></div>
+            <div style="margin-top:16px;display:flex;gap:8px;">
+              <button class="btn btn-secondary btn-sm" onclick="goStep(1)">← Kembali</button>
+              <button class="btn btn-emas btn-sm" onclick="goStep3()">Lanjut Pilih MK →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Pilih Kelas / MK -->
+      <div id="step-3" style="display:none;">
+        <div id="mhs-card-3"></div>
+        <div class="sks-meter">
+          <div class="sks-meter-top">
+            <div>
+              <div class="sks-meter-label">Total SKS Dipilih</div>
+              <div class="sks-meter-max">Maks: <strong id="sks-max-label">—</strong> SKS (berdasarkan IPK)</div>
+            </div>
+            <div class="sks-meter-val"><span id="sks-current">0</span> SKS</div>
+          </div>
+          <div class="sks-bar"><div class="sks-bar-fill" id="sks-bar-fill" style="width:0%"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">📚</div>
+            <div>
+              <div class="card-title">Pilih Mata Kuliah</div>
+              <div class="card-subtitle" id="step3-subtitle">Kelas tersedia untuk semester ini</div>
+            </div>
+            <div class="card-actions">
+              <span id="terpilih-count" style="font-family:'Cinzel',serif;font-size:11px;color:var(--emas-terang);font-weight:700;">0 MK dipilih</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="kelas-loading" class="loading"><div class="spinner"></div> Memuat kelas tersedia...</div>
+            <div class="kelas-grid" id="kelas-grid" style="display:none;"></div>
+            <div id="kelas-empty" class="empty-state" style="display:none;">
+              <div class="icon">🏫</div>
+              <div class="msg">Tidak ada kelas tersedia untuk semester dan tahun ajaran ini.<br>Pastikan kelas sudah dibuat di modul Kurikulum.</div>
+            </div>
+            <div style="margin-top:18px;display:flex;gap:8px;">
+              <button class="btn btn-secondary btn-sm" onclick="goStep(2)">← Kembali</button>
+              <button class="btn btn-emas btn-sm" onclick="goStep4()" id="btn-step4" disabled>Review KRS →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Konfirmasi & Submit -->
+      <div id="step-4" style="display:none;">
+        <div id="mhs-card-4"></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">📋</div>
+            <div><div class="card-title">Review Kartu Rencana Studi</div><div class="card-subtitle" id="step4-subtitle"></div></div>
+            <div class="card-actions">
+              <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Cetak</button>
+            </div>
+          </div>
+          <div class="card-body print-krs">
+            <div class="print-krs-header" style="display:none;" id="print-header">
+              <div class="inst-name">IAI Al-Aqidah Al-Hasyimiyyah</div>
+              <div class="doc-title">Kartu Rencana Studi (KRS)</div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>#</th><th>Kode MK</th><th>Nama Mata Kuliah</th>
+                  <th>SKS</th><th>Scope</th><th>Dosen</th><th>Jalur</th><th>Ruangan</th>
+                </tr></thead>
+                <tbody id="tbl-review"></tbody>
+              </table>
+            </div>
+            <div style="margin-top:14px;display:flex;justify-content:flex-end;align-items:center;gap:12px;padding-top:12px;border-top:1px solid var(--border);">
+              <span style="font-family:'Cinzel',serif;font-size:12px;color:var(--teks-mid);">Total SKS:</span>
+              <span style="font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--hijau-tua);" id="review-total-sks">0</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="goStep(3)">← Edit Pilihan</button>
+          <button class="btn btn-primary" onclick="simpanDraft()" id="btn-draft">💾 Simpan Draft</button>
+          <button class="btn btn-emas" onclick="simpanDanAjukan()" id="btn-ajukan">📤 Simpan & Ajukan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── APPROVAL KRS ── -->
+    <div class="page" id="page-approval">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">✅</div>
+          <div><div class="card-title">Approval KRS</div><div class="card-subtitle">Review dan setujui pengajuan KRS mahasiswa</div></div>
+        </div>
+        <div class="card-body">
+          <div class="toolbar" style="margin-bottom:16px;">
+            <div class="search-box">
+              <span class="si">🔍</span>
+              <input type="text" id="search-approval" placeholder="Cari NIM atau nama..." oninput="filterApproval()">
+            </div>
+            <select class="filter-select" id="filter-app-ta" onchange="filterApproval()">
+              <option value="">Semua Tahun Ajaran</option>
+            </select>
+            <select class="filter-select" id="filter-app-status" onchange="filterApproval()">
+              <option value="">Semua Status</option>
+              <option value="Diajukan">Diajukan</option>
+              <option value="Disetujui">Disetujui</option>
+              <option value="Ditolak">Ditolak</option>
+              <option value="Draft">Draft</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>NIM</th><th>Nama</th><th>Prodi</th>
+                <th>Smt</th><th>TA</th><th>SKS</th><th>Status</th><th>Aksi</th>
+              </tr></thead>
+              <tbody id="tbl-approval"></tbody>
+            </table>
+          </div>
+          <div id="empty-approval" class="empty-state" style="display:none;">
+            <div class="icon">✅</div><div class="msg">Tidak ada pengajuan KRS.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REKAP KRS ── -->
+    <div class="page" id="page-rekap">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">📊</div>
+          <div><div class="card-title">Rekap KRS</div><div class="card-subtitle">Laporan pengambilan KRS per tahun ajaran</div></div>
+          <div class="card-actions">
+            <button class="btn btn-emas btn-sm" onclick="exportRekap()">⬇️ Export</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end;">
+            <div class="form-group">
+              <label class="form-label">Tahun Ajaran</label>
+              <select class="filter-select" id="rekap-ta" onchange="loadRekap()">
+                <option value="">Semua</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Semester</label>
+              <select class="filter-select" id="rekap-smt" onchange="loadRekap()">
+                <option value="">Semua</option>
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+                <option>5</option><option>6</option><option>7</option><option>8</option>
+              </select>
+            </div>
+          </div>
+          <div id="rekap-chips" class="rekap-chips"></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>NIM</th><th>Nama Mahasiswa</th><th>Prodi</th>
+                <th>Smt</th><th>TA</th><th>MK</th><th>SKS</th><th>Status</th><th>Aksi</th>
+              </tr></thead>
+              <tbody id="tbl-rekap"></tbody>
+            </table>
+          </div>
+          <div id="empty-rekap" class="empty-state" style="display:none;">
+            <div class="icon">📊</div><div class="msg">Belum ada data KRS.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── KONFIGURASI ── -->
+    <div class="page" id="page-config">
+      <div class="card" style="max-width:580px">
+        <div class="card-header">
+          <div class="card-header-icon">⚙️</div>
+          <div><div class="card-title">Konfigurasi KRS</div><div class="card-subtitle">Atur periode, semester, batas SKS, dan status penerimaan</div></div>
+        </div>
+        <div class="card-body">
+          <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-left:3px solid var(--emas);border-radius:9px;padding:11px 14px;font-size:12px;color:var(--emas-gelap);display:flex;gap:8px;margin-bottom:18px">
+            ⚠️ Pengaturan ini berlaku global untuk semua mahasiswa.
+          </div>
+          <div class="form-grid">
+            <div class="form-group span-2">
+              <label class="form-label">Tahun Ajaran Aktif <span class="req">*</span></label>
+              <input class="form-input" id="cfg-ta" placeholder="cth: 2025/2026">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Semester Default (Fallback)</label>
+              <select class="form-select" id="cfg-smt">
+                <option value="1">Semester 1</option><option value="2">Semester 2</option>
+                <option value="3">Semester 3</option><option value="4">Semester 4</option>
+                <option value="5">Semester 5</option><option value="6">Semester 6</option>
+                <option value="7">Semester 7</option><option value="8">Semester 8</option>
+              </select>
+              <div style="font-size:11px;color:var(--teks-abu);font-style:italic;margin-top:4px;">
+                Digunakan hanya saat data akademik mahasiswa <strong>belum dimigrasi</strong>.
+                Setelah migrasi selesai, semester dibaca otomatis dari data tiap mahasiswa.
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Maksimum SKS per Semester</label>
+              <input class="form-input" id="cfg-max-sks" type="number" min="12" max="30" value="24">
+            </div>
+            <div class="form-group span-2">
+              <label class="form-label">Status Penerimaan KRS</label>
+              <div style="display:flex;gap:10px;margin-top:6px">
+                <label id="lbl-buka" style="display:flex;align-items:center;gap:8px;padding:11px 18px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;flex:1;background:var(--krem);transition:all .15s">
+                  <input type="radio" name="cfg-status" value="Buka" id="cfg-buka" style="accent-color:var(--hijau-mid)">
+                  <span style="font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--sukses)">🟢 Buka</span>
+                </label>
+                <label id="lbl-tutup" style="display:flex;align-items:center;gap:8px;padding:11px 18px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;flex:1;background:var(--krem);transition:all .15s">
+                  <input type="radio" name="cfg-status" value="Tutup" id="cfg-tutup" style="accent-color:var(--error)">
+                  <span style="font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--error)">🔴 Tutup</span>
+                </label>
+              </div>
+              <div style="font-size:11px;color:var(--teks-abu);font-style:italic;margin-top:5px">Saat "Tutup", mahasiswa tidak dapat mengajukan KRS baru.</div>
+            </div>
+          </div>
+          <div style="margin-top:20px;display:flex;justify-content:flex-end">
+            <button class="btn btn-primary" onclick="saveConfig()">💾 Simpan Konfigurasi</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="max-width:580px">
+        <div class="card-header"><div class="card-header-icon">📋</div><div class="card-title">Panduan Sheet krs_config</div></div>
+        <div class="card-body">
+          <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-left:3px solid var(--emas);border-radius:9px;padding:11px 14px;font-size:12px;color:var(--emas-gelap);margin-bottom:14px">
+            📌 Buat sheet <strong>krs_config</strong> di Spreadsheet DB Master dengan struktur berikut:
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Baris</th><th>Kolom A</th><th>Kolom B</th><th>Kolom C</th><th>Kolom D</th></tr></thead>
+              <tbody>
+                <tr><td style="font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:var(--emas-gelap)">Row 1</td><td>tahun_ajaran</td><td>semester_aktif</td><td>max_sks</td><td>status_penerimaan</td></tr>
+                <tr><td style="font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:var(--teks-abu)">Row 2</td><td style="color:var(--teks-abu)">2025/2026</td><td style="color:var(--teks-abu)">5</td><td style="color:var(--teks-abu)">24</td><td style="color:var(--teks-abu)">Buka</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size:11px;color:var(--teks-abu);font-style:italic;margin-top:10px">Hanya satu baris data (Row 2). Row 1 adalah header.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ════ MODALS ════ -->
+
+<!-- Modal: Detail KRS -->
+<div class="modal-overlay" id="modal-krs-detail">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-header-icon">📋</div>
+      <div class="modal-title" id="modal-detail-title">Detail KRS</div>
+      <button class="modal-close" onclick="closeModal('modal-krs-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-mhs-info" style="margin-bottom:14px;"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Kode MK</th><th>Nama MK</th><th>SKS</th><th>Dosen</th><th>Jalur</th></tr></thead>
+          <tbody id="tbl-modal-detail"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <span style="font-family:'Cinzel',serif;font-size:12px;color:var(--teks-mid);">Total SKS:</span>
+        <span style="font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--hijau-tua);" id="modal-total-sks">0</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-krs-detail')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Approve -->
+<div class="modal-overlay" id="modal-approve">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-icon">✅</div>
+      <div class="modal-title">Setujui KRS</div>
+      <button class="modal-close" onclick="closeModal('modal-approve')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="approve-krs-id">
+      <div class="alert alert-sukses" style="margin-bottom:14px;">✅ KRS ini akan disetujui dan tidak bisa diubah oleh mahasiswa.</div>
+      <div class="form-group">
+        <label class="form-label">Catatan (opsional)</label>
+        <textarea class="form-textarea" id="approve-catatan" placeholder="Catatan untuk mahasiswa..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-approve')">Batal</button>
+      <button class="btn btn-approve" onclick="submitApprove()">✅ Setujui KRS</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tolak -->
+<div class="modal-overlay" id="modal-tolak">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-icon">❌</div>
+      <div class="modal-title">Tolak KRS</div>
+      <button class="modal-close" onclick="closeModal('modal-tolak')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tolak-krs-id">
+      <div class="alert alert-error" style="margin-bottom:14px;">❌ Mahasiswa akan diminta untuk memperbaiki dan mengajukan ulang KRS.</div>
+      <div class="form-group">
+        <label class="form-label">Alasan Penolakan <span class="req">*</span></label>
+        <textarea class="form-textarea" id="tolak-catatan" placeholder="Jelaskan alasan penolakan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-tolak')">Batal</button>
+      <button class="btn btn-tolak" onclick="submitTolak()">❌ Tolak KRS</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ajukan KRS yang sudah Draft -->
+<div class="modal-overlay" id="modal-ajukan">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-header-icon">📤</div>
+      <div class="modal-title">Ajukan KRS</div>
+      <button class="modal-close" onclick="closeModal('modal-ajukan')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ajukan-krs-id">
+      <div class="alert alert-warn">📤 KRS akan diajukan ke admin untuk disetujui. Pastikan sudah benar sebelum mengajukan.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-ajukan')">Batal</button>
+      <button class="btn btn-emas" onclick="submitAjukan()">📤 Ajukan Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let st = {
+  prodi:[], fakultas:[], dosen:[], mk:[], kurikulum:[],
+  kelas:[], kelasProdi:[], allKRS:[],
+  tahunAjaranList:[],
+  // Input KRS wizard
+  selectedMhs: null,
+  selectedSmt: null,
+  selectedTA:  null,
+  selectedKelas: new Set(),
+  maxSKS: 20,
+  currentKrsId: null,
+  currentStep: 1,
+};
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Radio config highlight on change
+  document.querySelectorAll('input[name="cfg-status"]').forEach(r => {
+    r.addEventListener('change', () => highlightRadio(r.value));
+  });
+
+  google.script.run
+    .withSuccessHandler(d => {
+      st.prodi = d.prodi; st.fakultas = d.fakultas; st.dosen = d.dosen;
+      st.mk = d.mk; st.kurikulum = d.kurikulum;
+      st.kelas = d.kelas; st.kelasProdi = d.kelasProdi;
+      applyConfig(d.config);
+      loadKRS();
+    })
+    .withFailureHandler(onErr)
+    .getInitData();
+});
+
+function loadKRS() {
+  google.script.run.withSuccessHandler(data => {
+    st.allKRS = data;
+    // count tahun ajaran
+    st.tahunAjaranList = [...new Set(data.map(k=>k.tahun_ajaran).filter(Boolean))].sort().reverse();
+    populateTAFilters();
+    updateStats();
+    loadDashboard();
+    filterApproval();
+    loadRekap();
+  }).withFailureHandler(onErr).getAllKRS();
+}
+
+function refreshData() {
+  loadKRS();
+  toast('Data diperbarui','success');
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+const pageMeta = {
+  dashboard: { title:'Dashboard',        sub:'Ringkasan KRS mahasiswa' },
+  input:     { title:'Input KRS',        sub:'Wizard pengisian Kartu Rencana Studi' },
+  approval:  { title:'Approval KRS',     sub:'Persetujuan pengajuan KRS oleh admin' },
+  rekap:     { title:'Rekap KRS',        sub:'Laporan dan statistik KRS' },
+  config:    { title:'Konfigurasi KRS',  sub:'Pengaturan periode dan batas SKS' },
+};
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name)?.classList.add('active');
+  document.getElementById('nav-'+name)?.classList.add('active');
+  const m = pageMeta[name]||{};
+  document.getElementById('page-title').textContent = m.title||name;
+  document.getElementById('page-sub').textContent   = m.sub||'';
+}
+
+// ══════════════════════════════════════════════
+// POPULATE FILTERS
+// ══════════════════════════════════════════════
+function populateTAFilters() {
+  const opts = st.tahunAjaranList.map(ta=>`<option value="${ta}">${ta}</option>`).join('');
+  ['dash-filter-ta','filter-app-ta','rekap-ta'].forEach(id=>{
+    const el = document.getElementById(id); if(!el) return;
+    const ph = el.options[0]?.value==='' ? el.options[0].outerHTML : '';
+    el.innerHTML = ph + opts;
+  });
+}
+
+// ══════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════
+function updateStats() {
+  const menunggu = st.allKRS.filter(k=>k.status_krs==='Diajukan').length;
+  document.getElementById('s-total').textContent     = st.allKRS.length;
+  document.getElementById('s-menunggu').textContent  = menunggu;
+  document.getElementById('s-disetujui').textContent = st.allKRS.filter(k=>k.status_krs==='Disetujui').length;
+  document.getElementById('s-ditolak').textContent   = st.allKRS.filter(k=>k.status_krs==='Ditolak').length;
+  document.getElementById('badge-menunggu').textContent = menunggu;
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD TABLE
+// ══════════════════════════════════════════════
+function loadDashboard() {
+  const taFilter = document.getElementById('dash-filter-ta')?.value||'';
+  let list = st.allKRS;
+  if (taFilter) list = list.filter(k=>k.tahun_ajaran===taFilter);
+  list = list.slice().sort((a,b)=> new Date(b.created_at)-new Date(a.created_at)).slice(0,50);
+
+  const tbody = document.getElementById('tbl-dashboard');
+  const empty = document.getElementById('empty-dashboard');
+  if (!list.length) { tbody.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  tbody.innerHTML = list.map(k => {
+    const mhs   = findMhs(k.nim);
+    const prodi = findProdi(mhs?.prodi_id);
+    return `<tr>
+      <td><strong>${k.nim}</strong></td>
+      <td>${mhs?.nama_lengkap||'—'}</td>
+      <td><span class="badge-scope badge-mkli" style="font-size:9px;">${prodi?.singkatan||'—'}</span></td>
+      <td><span class="badge badge-disetujui" style="background:var(--hijau-pale);color:var(--hijau-tua);">${k.semester}</span></td>
+      <td>${k.tahun_ajaran}</td>
+      <td>—</td>
+      <td>${statusBadge(k.status_krs)}</td>
+      <td class="td-actions">
+        <button class="btn btn-ghost btn-xs" onclick="openDetailModal(${k.id})">👁 Detail</button>
+        ${k.status_krs==='Diajukan'?`<button class="btn btn-approve btn-xs" onclick="openApprove(${k.id})">✅</button><button class="btn btn-tolak btn-xs" onclick="openTolak(${k.id})">❌</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// APPROVAL TABLE
+// ══════════════════════════════════════════════
+function filterApproval() {
+  const q  = document.getElementById('search-approval')?.value.toLowerCase()||'';
+  const ta = document.getElementById('filter-app-ta')?.value||'';
+  const st_f = document.getElementById('filter-app-status')?.value||'';
+  let list = st.allKRS;
+  if (q)   list = list.filter(k=>{const m=findMhs(k.nim);return k.nim.includes(q)||(m?.nama_lengkap||'').toLowerCase().includes(q)});
+  if (ta)  list = list.filter(k=>k.tahun_ajaran===ta);
+  if (st_f)list = list.filter(k=>k.status_krs===st_f);
+  list = list.slice().sort((a,b)=>{ const o={Diajukan:0,Draft:1,Ditolak:2,Disetujui:3}; return (o[a.status_krs]||9)-(o[b.status_krs]||9); });
+
+  const tbody = document.getElementById('tbl-approval');
+  const empty = document.getElementById('empty-approval');
+  if (!list.length) { tbody.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  tbody.innerHTML = list.map(k => {
+    const mhs   = findMhs(k.nim);
+    const prodi = findProdi(mhs?.prodi_id);
+    return `<tr>
+      <td><code style="font-size:11px;background:var(--krem-gelap);padding:2px 6px;border-radius:4px;">${k.nim}</code></td>
+      <td><strong>${mhs?.nama_lengkap||'—'}</strong></td>
+      <td>${prodi?.singkatan||'—'}</td>
+      <td>${k.semester}</td>
+      <td>${k.tahun_ajaran}</td>
+      <td>—</td>
+      <td>${statusBadge(k.status_krs)}</td>
+      <td class="td-actions">
+        <button class="btn btn-ghost btn-xs" onclick="openDetailModal(${k.id})">👁</button>
+        ${k.status_krs==='Diajukan'?`
+          <button class="btn btn-approve btn-xs" onclick="openApprove(${k.id})">✅ Setujui</button>
+          <button class="btn btn-tolak btn-xs" onclick="openTolak(${k.id})">❌ Tolak</button>`:
+        k.status_krs==='Draft'?`<button class="btn btn-ghost btn-xs" onclick="openAjukanModal(${k.id})">📤 Ajukan</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// REKAP
+// ══════════════════════════════════════════════
+function loadRekap() {
+  const ta  = document.getElementById('rekap-ta')?.value||'';
+  const smt = document.getElementById('rekap-smt')?.value||'';
+  let list = st.allKRS;
+  if (ta)  list = list.filter(k=>k.tahun_ajaran===ta);
+  if (smt) list = list.filter(k=>String(k.semester)===smt);
+
+  // Chips summary
+  const byStatus = {};
+  list.forEach(k=>{ byStatus[k.status_krs]=(byStatus[k.status_krs]||0)+1; });
+  document.getElementById('rekap-chips').innerHTML = Object.entries(byStatus)
+    .map(([s,n])=>`<div class="rekap-chip active">${statusBadge(s)} <strong>${n}</strong></div>`).join('');
+
+  const tbody = document.getElementById('tbl-rekap');
+  const empty = document.getElementById('empty-rekap');
+  if (!list.length){ tbody.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  tbody.innerHTML = list.map(k=>{
+    const mhs   = findMhs(k.nim);
+    const prodi = findProdi(mhs?.prodi_id);
+    return `<tr>
+      <td>${k.nim}</td>
+      <td><strong>${mhs?.nama_lengkap||'—'}</strong></td>
+      <td>${prodi?.singkatan||'—'}</td>
+      <td>${k.semester}</td>
+      <td>${k.tahun_ajaran}</td>
+      <td>—</td><td>—</td>
+      <td>${statusBadge(k.status_krs)}</td>
+      <td class="td-actions">
+        <button class="btn btn-ghost btn-xs" onclick="openDetailModal(${k.id})">👁</button>
+        ${k.status_krs==='Diajukan'?`<button class="btn btn-approve btn-xs" onclick="openApprove(${k.id})">✅</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function exportRekap() { toast('Export dalam pengembangan — bisa ditambahkan ke Google Sheets','warning'); }
+
+// ══════════════════════════════════════════════
+// DETAIL MODAL
+// ══════════════════════════════════════════════
+function openDetailModal(krsId) {
+  const krs = st.allKRS.find(k=>Number(k.id)===Number(krsId));
+  if (!krs) return;
+  const mhs   = findMhs(krs.nim);
+  const prodi = findProdi(mhs?.prodi_id);
+  document.getElementById('modal-detail-title').textContent = `KRS — ${mhs?.nama_lengkap||krs.nim}`;
+  document.getElementById('modal-mhs-info').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      ${infoChip('NIM',krs.nim)} ${infoChip('Semester',krs.semester)} ${infoChip('Tahun Ajaran',krs.tahun_ajaran)}
+      ${infoChip('Prodi',prodi?.nama_prodi||'—')} ${infoChip('Status',statusBadge(krs.status_krs))} ${krs.catatan_admin?infoChip('Catatan Admin',krs.catatan_admin):''}
+    </div>`;
+  // Load detail dari server
+  google.script.run.withSuccessHandler(detail=>{
+    const rows = detail.map((d,i)=>{
+      const kls = st.kelas.find(k=>Number(k.id)===Number(d.kelas_id));
+      const mk  = kls ? st.mk.find(m=>Number(m.id)===Number(kls.mata_kuliah_id)) : null;
+      const ds  = kls ? st.dosen.find(dos=>Number(dos.id)===Number(kls.dosen_id)) : null;
+      return `<tr>
+        <td>${i+1}</td>
+        <td><code style="font-size:10px;background:var(--krem-gelap);padding:2px 6px;border-radius:4px;">${mk?.kode_mk||'—'}</code></td>
+        <td><strong>${mk?.nama_mk||'—'}</strong></td>
+        <td><strong>${mk?.sks||0}</strong></td>
+        <td style="font-size:11px;">${ds?.nama_dosen||'TBA'}</td>
+        <td>${kls?.jalur==='Intensif'?'<span class="jalur-i badge-scope">Intensif</span>':'<span class="jalur-r badge-scope">Reguler</span>'}</td>
+      </tr>`;
+    }).join('');
+    const total = detail.reduce((s,d)=>{const kls=st.kelas.find(k=>Number(k.id)===Number(d.kelas_id));const mk=kls?st.mk.find(m=>Number(m.id)===Number(kls.mata_kuliah_id)):null;return s+(mk?Number(mk.sks):0);},0);
+    document.getElementById('tbl-modal-detail').innerHTML = rows || '<tr><td colspan="6" class="empty-state"><div class="msg">Tidak ada detail MK</div></td></tr>';
+    document.getElementById('modal-total-sks').textContent = total + ' SKS';
+  }).withFailureHandler(onErr).getKRSDetail(krsId);
+  openModal('modal-krs-detail');
+}
+
+function infoChip(label, val) {
+  return `<div style="background:var(--krem-gelap);border:1px solid var(--border);border-radius:8px;padding:8px 12px;">
+    <div style="font-family:'Cinzel',serif;font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--teks-abu);margin-bottom:3px;">${label}</div>
+    <div style="font-size:12px;font-weight:600;color:var(--teks-gelap);">${val}</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// APPROVE / TOLAK
+// ══════════════════════════════════════════════
+function openApprove(krsId) {
+  document.getElementById('approve-krs-id').value = krsId;
+  document.getElementById('approve-catatan').value = '';
+  openModal('modal-approve');
+}
+function submitApprove() {
+  const id = document.getElementById('approve-krs-id').value;
+  const cat = document.getElementById('approve-catatan').value.trim();
+  closeModal('modal-approve');
+  google.script.run.withSuccessHandler(res=>{
+    toast(res.message, res.success?'success':'error');
+    if (res.success) loadKRS();
+  }).withFailureHandler(onErr).approveKRS(id, cat);
+}
+
+function openTolak(krsId) {
+  document.getElementById('tolak-krs-id').value = krsId;
+  document.getElementById('tolak-catatan').value = '';
+  openModal('modal-tolak');
+}
+function submitTolak() {
+  const id  = document.getElementById('tolak-krs-id').value;
+  const cat = document.getElementById('tolak-catatan').value.trim();
+  if (!cat) { toast('Alasan penolakan wajib diisi','error'); return; }
+  closeModal('modal-tolak');
+  google.script.run.withSuccessHandler(res=>{
+    toast(res.message, res.success?'success':'error');
+    if (res.success) loadKRS();
+  }).withFailureHandler(onErr).tolakKRS(id, cat);
+}
+
+function openAjukanModal(krsId) {
+  document.getElementById('ajukan-krs-id').value = krsId;
+  openModal('modal-ajukan');
+}
+function submitAjukan() {
+  const id = document.getElementById('ajukan-krs-id').value;
+  closeModal('modal-ajukan');
+  google.script.run.withSuccessHandler(res=>{
+    toast(res.message, res.success?'success':'error');
+    if (res.success) loadKRS();
+  }).withFailureHandler(onErr).ajukanKRS(id);
+}
+
+// ══════════════════════════════════════════════
+// WIZARD — INPUT KRS
+// ══════════════════════════════════════════════
+function goStep(n) {
+  [1,2,3,4].forEach(i=>{
+    const s = document.getElementById('step-'+i);
+    if (s) s.style.display = i===n?'block':'none';
+    const ws = document.getElementById('wstep-'+i);
+    if (ws) {
+      ws.classList.remove('active','done');
+      if (i===n) ws.classList.add('active');
+      else if (i<n) ws.classList.add('done');
+    }
+  });
+  st.currentStep = n;
+}
+
+// ── Step 1: Cari Mahasiswa ──
+let searchTimer;
+function searchMahasiswaLive() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(cariMahasiswa, 350);
+}
+function cariMahasiswa() {
+  const q = document.getElementById('input-cari-mhs').value.trim();
+  if (q.length < 3) {
+    document.getElementById('search-results').style.display='none';
+    document.getElementById('search-empty').style.display='none';
+    return;
+  }
+  google.script.run.withSuccessHandler(results=>{
+    const res = document.getElementById('search-results');
+    const emp = document.getElementById('search-empty');
+    const list= document.getElementById('search-results-list');
+    if (!results.length){ res.style.display='none'; emp.style.display=''; return; }
+    emp.style.display='none';
+    list.innerHTML = results.map(m=>{
+      const pr = findProdi(m.prodi_id);
+      return `<div onclick="selectMahasiswa(${JSON.stringify(m).replace(/"/g,'&quot;')})"
+        style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--putih);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;"
+        onmouseover="this.style.borderColor='var(--hijau-mid)';this.style.background='var(--hijau-pale)'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--putih)'">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--hijau-tua),var(--hijau-mid));display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🎓</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:var(--hijau-tua);">${m.nama_lengkap}</div>
+          <div style="font-size:11px;color:var(--teks-abu);margin-top:1px;">${m.nim} · ${pr?.nama_prodi||'—'} · ${m.status_mahasiswa}</div>
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;background:var(--krem-gelap);color:var(--hijau-tua);">${pr?.singkatan||'—'}</div>
+      </div>`;
+    }).join('');
+    res.style.display='';
+  }).withFailureHandler(onErr).searchMahasiswa(q);
+}
+
+function selectMahasiswa(mhs) {
+  st.selectedMhs = mhs;
+  // Ambil data akademik
+  google.script.run.withSuccessHandler(akd=>{
+    st.selectedAkd = akd;
+
+    // ── Semester mahasiswa ──────────────────────────────────────────
+    // Prioritas: data akademik mhs → fallback: config.semester_aktif
+    // Kasus: sistem baru diimplementasi, data mhs belum dimigrasikan
+    const ipk = akd ? Number(akd.ipk) : 0;
+    const smtDariAkd = akd && akd.semester_aktif
+      ? Number(akd.semester_aktif)
+      : null;
+    const smtFallback = st.config.semester_aktif || 1;
+    const smt = smtDariAkd !== null ? smtDariAkd : smtFallback;
+
+    // Tampilkan info ke user kalau semester dari fallback
+    if (smtDariAkd === null) {
+      toast(`Data akademik belum ada — semester diisi dari konfigurasi (Smt ${smtFallback})`, 'warning');
+    }
+
+    // Hitung max SKS berdasarkan IPK
+    if (smt <= 2) st.maxSKS = 20;
+    else if (ipk >= 3.0) st.maxSKS = 24;
+    else if (ipk >= 2.5) st.maxSKS = 21;
+    else st.maxSKS = 18;
+    // Override dari config jika lebih rendah (respek batas admin)
+    if (st.config.max_sks) st.maxSKS = Math.min(st.maxSKS, st.config.max_sks);
+
+    // ── Tahun Ajaran ────────────────────────────────────────────────
+    // Prioritas: config.tahun_ajaran → fallback: hitung dari tanggal sistem
+    let ta = st.config.tahun_ajaran || '';
+    if (!ta) {
+      const now = new Date();
+      const bulan = now.getMonth() + 1;
+      const tahun = now.getFullYear();
+      ta = bulan >= 7 ? `${tahun}/${tahun+1}` : `${tahun-1}/${tahun}`;
+    }
+
+    document.getElementById('input-semester').value = smt;
+    document.getElementById('input-ta').value = ta;
+
+    renderMhsCard('mhs-card-2', mhs, akd);
+    goStep(2);
+    cekKRSExisting();
+  }).withFailureHandler(onErr).getAkademikMahasiswa(mhs.nim);
+}
+
+function renderMhsCard(targetId, mhs, akd) {
+  const pr = findProdi(mhs.prodi_id);
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  el.innerHTML = `<div class="mhs-card" style="margin-bottom:16px;">
+    <div class="mhs-avatar">🎓</div>
+    <div class="mhs-info">
+      <div class="nim">${mhs.nim}</div>
+      <div class="nama">${mhs.nama_lengkap}</div>
+      <div class="detail">${pr?.nama_prodi||'—'} · ${mhs.jenjang} · ${mhs.status_mahasiswa}</div>
+    </div>
+    <div class="mhs-stats">
+      <div class="mhs-stat"><div class="val">${akd?.ipk?.toFixed(2)||'—'}</div><div class="lbl">IPK</div></div>
+      <div class="mhs-stat"><div class="val">${akd?.total_sks||0}</div><div class="lbl">Total SKS</div></div>
+      <div class="mhs-stat"><div class="val">${st.maxSKS}</div><div class="lbl">Maks SKS</div></div>
+    </div>
+  </div>`;
+  // Sync ke step lain
+  ['mhs-card-3','mhs-card-4'].forEach(id=>{
+    const e2 = document.getElementById(id);
+    if (e2) e2.innerHTML = el.innerHTML;
+  });
+}
+
+function cekKRSExisting() {
+  if (!st.selectedMhs) return;
+  const smt = document.getElementById('input-semester').value;
+  const ta  = document.getElementById('input-ta').value;
+  const existing = st.allKRS.find(k=>k.nim===st.selectedMhs.nim && String(k.semester)===String(smt) && k.tahun_ajaran===ta);
+  const info = document.getElementById('krs-existing-info');
+  if (existing) {
+    info.style.display='';
+    const cls = existing.status_krs==='Disetujui'?'alert-error':'alert-warn';
+    info.innerHTML = `<div class="alert ${cls}">
+      ⚠ Sudah ada KRS Semester ${smt} TA ${ta} dengan status <strong>${existing.status_krs}</strong>.
+      ${existing.status_krs==='Disetujui'?'KRS yang disetujui tidak dapat diubah.':'KRS akan ditimpa jika dilanjutkan.'}
+    </div>`;
+    st.currentKrsId = existing.id;
+  } else {
+    info.style.display='none';
+    st.currentKrsId = null;
+  }
+}
+
+// ── Step 3: Pilih Kelas ──
+function goStep3() {
+  const smt = document.getElementById('input-semester').value;
+  const ta  = document.getElementById('input-ta').value.trim();
+  if (!smt||!ta) { toast('Lengkapi semester dan tahun ajaran','error'); return; }
+  // Cek apakah sudah disetujui
+  const existing = st.allKRS.find(k=>k.nim===st.selectedMhs.nim && String(k.semester)===String(smt) && k.tahun_ajaran===ta);
+  if (existing && existing.status_krs==='Disetujui') { toast('KRS semester ini sudah disetujui dan tidak bisa diubah','error'); return; }
+
+  st.selectedSmt = Number(smt);
+  st.selectedTA  = ta;
+  st.selectedKelas = new Set();
+  renderMhsCard('mhs-card-3', st.selectedMhs, st.selectedAkd);
+  renderMhsCard('mhs-card-4', st.selectedMhs, st.selectedAkd);
+
+  document.getElementById('step3-subtitle').textContent = `Semester ${smt} · TA ${ta}`;
+  document.getElementById('sks-max-label').textContent = st.maxSKS;
+  updateSKSMeter();
+
+  goStep(3);
+  // Load kelas dari server
+  document.getElementById('kelas-loading').style.display='flex';
+  document.getElementById('kelas-grid').style.display='none';
+  document.getElementById('kelas-empty').style.display='none';
+
+  google.script.run.withSuccessHandler(list=>{
+    document.getElementById('kelas-loading').style.display='none';
+    if (!list.length){ document.getElementById('kelas-empty').style.display=''; return; }
+
+    // Pre-check kelas yang sudah ada di KRS existing
+    if (existing) {
+      google.script.run.withSuccessHandler(detail=>{
+        detail.forEach(d => st.selectedKelas.add(Number(d.kelas_id)));
+        renderKelasGrid(list);
+        updateSKSMeter();
+      }).withFailureHandler(onErr).getKRSDetail(existing.id);
+    } else {
+      renderKelasGrid(list);
+    }
+  }).withFailureHandler(onErr).getKelasUntukMahasiswa(st.selectedMhs.nim, smt, ta);
+}
+
+function renderKelasGrid(list) {
+  document.getElementById('kelas-grid').style.display='grid';
+  document.getElementById('kelas-grid').innerHTML = list.map(k=>{
+    const selected = st.selectedKelas.has(Number(k.id));
+    return `<div class="kelas-item ${selected?'selected':''}" id="ki-${k.id}" onclick="toggleKelas(${k.id},${k.sks})">
+      <div class="ki-check">${selected?'✓':''}</div>
+      <div class="ki-kode">${k.kode_mk}</div>
+      <div class="ki-nama">${k.nama_mk}</div>
+      <div class="ki-meta">
+        <span class="ki-sks">${k.sks} SKS</span>
+        <span class="ki-jalur ${k.jalur==='Intensif'?'jalur-i':'jalur-r'}">${k.jalur}</span>
+        ${k.rps_url?`<a href="${k.rps_url}" target="_blank" onclick="event.stopPropagation()" style="font-size:10px;color:var(--emas-gelap);font-weight:600;text-decoration:underline;">📄 RPS</a>`:''}
+      </div>
+      <div class="ki-dosen" style="margin-top:6px;">👤 ${k.nama_dosen}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleKelas(kelasId, sks) {
+  const id = Number(kelasId);
+  const el = document.getElementById('ki-'+id);
+  if (!el || el.classList.contains('disabled')) return;
+
+  // Hitung SKS saat ini
+  let totalSKS = calcSelectedSKS();
+  const isSelected = st.selectedKelas.has(id);
+
+  if (!isSelected) {
+    if (totalSKS + Number(sks) > st.maxSKS) {
+      toast(`Tidak bisa ditambah — melebihi batas ${st.maxSKS} SKS`,'warning');
+      el.style.animation='shake .3s ease';
+      setTimeout(()=>el.style.animation='',400);
+      return;
+    }
+    st.selectedKelas.add(id);
+    el.classList.add('selected');
+    el.querySelector('.ki-check').textContent='✓';
+  } else {
+    st.selectedKelas.delete(id);
+    el.classList.remove('selected');
+    el.querySelector('.ki-check').textContent='';
+  }
+  updateSKSMeter();
+  document.getElementById('terpilih-count').textContent = `${st.selectedKelas.size} MK dipilih`;
+  document.getElementById('btn-step4').disabled = st.selectedKelas.size === 0;
+}
+
+function calcSelectedSKS() {
+  let total = 0;
+  st.selectedKelas.forEach(kelasId=>{
+    const kls = st.kelas.find(k=>Number(k.id)===kelasId);
+    const mk  = kls ? st.mk.find(m=>Number(m.id)===Number(kls.mata_kuliah_id)) : null;
+    if (mk) total += Number(mk.sks);
+  });
+  return total;
+}
+
+function updateSKSMeter() {
+  const total = calcSelectedSKS();
+  const max   = st.maxSKS;
+  const pct   = Math.min(100, (total/max)*100);
+  document.getElementById('sks-current').textContent = total;
+  const fill = document.getElementById('sks-bar-fill');
+  fill.style.width = pct+'%';
+  fill.className = 'sks-bar-fill' + (pct>=100?' over': pct>=85?' warn':'');
+}
+
+// ── Step 4: Review ──
+function goStep4() {
+  if (st.selectedKelas.size===0){ toast('Pilih minimal 1 mata kuliah','error'); return; }
+  goStep(4);
+  document.getElementById('step4-subtitle').textContent = `Semester ${st.selectedSmt} · TA ${st.selectedTA}`;
+
+  let totalSKS=0, rows='';
+  let i=1;
+  st.selectedKelas.forEach(kelasId=>{
+    const kls = st.kelas.find(k=>Number(k.id)===kelasId);
+    const mk  = kls ? st.mk.find(m=>Number(m.id)===Number(kls.mata_kuliah_id)) : null;
+    const ds  = kls ? st.dosen.find(d=>Number(d.id)===Number(kls.dosen_id)) : null;
+    const sks = mk?Number(mk.sks):0;
+    totalSKS += sks;
+    rows += `<tr>
+      <td>${i++}</td>
+      <td><code style="font-size:10px;background:var(--krem-gelap);padding:2px 6px;border-radius:4px;">${mk?.kode_mk||'—'}</code></td>
+      <td><strong>${mk?.nama_mk||'—'}</strong></td>
+      <td><strong>${sks}</strong></td>
+      <td>${scopeBadge(mk?.scope)}</td>
+      <td style="font-size:11px;">${ds?.nama_dosen||'TBA'}</td>
+      <td>${kls?.jalur==='Intensif'?'<span class="jalur-i badge-scope">Intensif</span>':'<span class="jalur-r badge-scope">Reguler</span>'}</td>
+      <td>${kls?.ruangan||'—'}</td>
+    </tr>`;
+  });
+  document.getElementById('tbl-review').innerHTML = rows;
+  document.getElementById('review-total-sks').textContent = totalSKS+' SKS';
+}
+
+function simpanDraft() { doSaveKRS(false); }
+function simpanDanAjukan() { doSaveKRS(true); }
+
+function doSaveKRS(ajukan) {
+  if (!st.selectedMhs||!st.selectedSmt||!st.selectedTA) { toast('Data tidak lengkap','error'); return; }
+  const kur = st.kurikulum.find(k=>Number(k.prodi_id)===Number(st.selectedMhs.prodi_id)&&k.status==='Aktif');
+  if (!kur){ toast('Kurikulum aktif tidak ditemukan untuk prodi ini','error'); return; }
+
+  const data = {
+    nim: st.selectedMhs.nim,
+    kurikulum_id: kur.id,
+    semester: st.selectedSmt,
+    tahun_ajaran: st.selectedTA,
+    kelas_ids: [...st.selectedKelas],
+  };
+
+  document.getElementById('btn-draft').disabled=true;
+  document.getElementById('btn-ajukan').disabled=true;
+
+  google.script.run.withSuccessHandler(res=>{
+    document.getElementById('btn-draft').disabled=false;
+    document.getElementById('btn-ajukan').disabled=false;
+    if (!res.success){ toast(res.message,'error'); return; }
+    toast(res.message,'success');
+    if (ajukan && res.krsId) {
+      google.script.run.withSuccessHandler(res2=>{
+        toast(res2.message, res2.success?'success':'error');
+        loadKRS();
+        resetWizard();
+        showPage('approval');
+      }).withFailureHandler(onErr).ajukanKRS(res.krsId);
+    } else {
+      loadKRS();
+      resetWizard();
+      showPage('dashboard');
+    }
+  }).withFailureHandler(err=>{ document.getElementById('btn-draft').disabled=false; document.getElementById('btn-ajukan').disabled=false; onErr(err); }).saveKRS(data);
+}
+
+function resetWizard() {
+  st.selectedMhs=null; st.selectedSmt=null; st.selectedTA=null;
+  st.selectedKelas=new Set(); st.currentKrsId=null;
+  document.getElementById('input-cari-mhs').value='';
+  document.getElementById('search-results').style.display='none';
+  document.getElementById('search-empty').style.display='none';
+  ['mhs-card-2','mhs-card-3','mhs-card-4'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=''; });
+  document.getElementById('kelas-grid').innerHTML='';
+  goStep(1);
+}
+
+// ══════════════════════════════════════════════
+// HELPERS — find in state
+// ══════════════════════════════════════════════
+function findMhs(nim)     { return st.allKRS._mhsCache?.[nim] || null; } // fallback — loaded fresh from server when needed
+function findProdi(id)    { return st.prodi.find(p=>Number(p.id)===Number(id)); }
+
+function statusBadge(s) {
+  const map = {
+    'Draft':     'badge-draft',
+    'Diajukan':  'badge-diajukan',
+    'Disetujui': 'badge-disetujui',
+    'Ditolak':   'badge-ditolak',
+  };
+  return `<span class="badge ${map[s]||'badge-draft'}">${s}</span>`;
+}
+
+function scopeBadge(sc) {
+  if (!sc) return '';
+  const map = {MKWN:'badge-mkwn',MKLI:'badge-mkli',MKI:'badge-mki',MKKK:'badge-mkkk',MKP:'badge-mkp'};
+  return `<span class="badge-scope ${map[sc]||''}">${sc}</span>`;
+}
+
+// Patch findMhs to look up from server data
+function getAllMhsFromKRS(list) {
+  const nims = [...new Set(list.map(k=>k.nim))];
+  // Use local cache approach
+  return nims;
+}
+
+// Override findMhs — lookup from rekapData if loaded
+let mhsCache = {};
+function findMhsFromCache(nim) { return mhsCache[nim]||null; }
+
+// Patch dashboard / rekap rendering to load mhs data on demand
+google.script.run;  // warm up
+
+// On init, also load mahasiswa list for cache
+function loadMhsCache() {
+  google.script.run.withSuccessHandler(list=>{
+    mhsCache = {};
+    list.forEach(m=>{ mhsCache[m.nim]=m; });
+    // Re-render tables that need mhs data
+    loadDashboard(); filterApproval(); loadRekap();
+  }).withFailureHandler(()=>{}).getAllMahasiswa();
+}
+
+// Override findMhs to use cache
+window.findMhs = nim => mhsCache[nim]||null;
+
+// Load cache on startup after initData
+document.addEventListener('DOMContentLoaded', ()=>{
+  setTimeout(loadMhsCache, 800);
+});
+
+// ══════════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// KONFIGURASI
+// ══════════════════════════════════════════════
+function applyConfig(cfg) {
+  if (!cfg) return;
+  st.config = cfg;
+  // Topbar pill
+  const taEl = document.getElementById('cp-ta');
+  const smEl = document.getElementById('cp-smt');
+  const stEl = document.getElementById('cp-status');
+  if (taEl) taEl.textContent = cfg.tahun_ajaran || '—';
+  if (smEl) smEl.textContent = cfg.semester_aktif ? `Smt ${cfg.semester_aktif}` : '—';
+  if (stEl) {
+    stEl.textContent = cfg.status_penerimaan;
+    stEl.className = cfg.status_penerimaan === 'Buka' ? 'buka' : 'tutup';
+  }
+  // Config form
+  const ta = document.getElementById('cfg-ta'); if (ta) ta.value = cfg.tahun_ajaran || '';
+  const sm = document.getElementById('cfg-smt'); if (sm) sm.value = cfg.semester_aktif || 1;
+  const mx = document.getElementById('cfg-max-sks'); if (mx) mx.value = cfg.max_sks || 24;
+  const radio = document.querySelector(`input[name="cfg-status"][value="${cfg.status_penerimaan}"]`);
+  if (radio) { radio.checked = true; highlightRadio(cfg.status_penerimaan); }
+}
+
+function highlightRadio(val) {
+  const lb = document.getElementById('lbl-buka');
+  const lt = document.getElementById('lbl-tutup');
+  if (!lb || !lt) return;
+  lb.style.borderColor = val === 'Buka' ? 'var(--sukses)' : 'var(--border)';
+  lt.style.borderColor = val === 'Tutup' ? 'var(--error)' : 'var(--border)';
+}
+
+function saveConfig() {
+  const ta  = document.getElementById('cfg-ta')?.value.trim();
+  const smt = document.getElementById('cfg-smt')?.value;
+  const mx  = document.getElementById('cfg-max-sks')?.value;
+  const st2 = document.querySelector('input[name="cfg-status"]:checked')?.value || 'Tutup';
+  if (!ta) { toast('Isi tahun ajaran terlebih dahulu', 'error'); return; }
+  const data = { tahun_ajaran: ta, semester_aktif: Number(smt), max_sks: Number(mx) || 24, status_penerimaan: st2 };
+  google.script.run
+    .withSuccessHandler(res => {
+      toast(res.message, res.success ? 'success' : 'error');
+      if (res.success) applyConfig(data);
+    })
+    .withFailureHandler(onErr)
+    .saveKRSConfig(data);
+}
+
+function openModal(id)  { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function toast(msg, type='default') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icon = {success:'✅',error:'❌',warning:'⚠️',default:'ℹ️'}[type]||'ℹ️';
+  t.innerHTML = `<span>${icon}</span> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+function onErr(err) { toast('Gagal: '+(err.message||err),'error'); }
+
+// ══════════════════════════════════════════════
+// CSS SHAKE ANIMATION (inline)
+// ══════════════════════════════════════════════
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}`;
+document.head.appendChild(shakeStyle);
+</script>
+</body>
+</html>
