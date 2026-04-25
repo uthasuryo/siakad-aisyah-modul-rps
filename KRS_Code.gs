@@ -14,7 +14,7 @@ const DATA_START = 3;
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index_KRS')
-    .setTitle('SIAKAD — Kartu Rencana Studi')
+    .setTitle('AISYAH — Kartu Rencana Studi')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
@@ -78,7 +78,7 @@ function sheetToObjects(sheetName, colMap) {
 
   // Cari baris data pertama: cek row 2 dulu, kalau kosong cek row 3
   let startRow = 2;
-  if (lastRow >= 3) {
+  if (lastRow >= 2) {
     const r2 = sh.getRange(2, 1).getValue();
     // Kalau row 2 adalah label type (PK/FK/teks non-data), mulai dari row 3
     const r2str = String(r2).trim().toUpperCase();
